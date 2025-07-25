@@ -25,11 +25,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"},)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
@@ -37,7 +33,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    
     user = users_collection.find_one({"username": username})
     if user is None:
         raise credentials_exception
@@ -57,14 +52,42 @@ def register_user(user_in: UserIn):
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = users_collection.find_one({"username": form_data.username})
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Invalid credentials"
-            )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
     if not bcrypt.checkpw(form_data.password.encode('utf-8'), user["password"].encode('utf-8')):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Invalid credentials"
-            )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
     access_token = create_access_token(data={"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/products", status_code=status.HTTP_201_CREATED)
+def add_product(product: ProductIn, current_user: dict = Depends(get_current_user)):
+    product_data = product.dict()
+    result = products_collection.insert_one(product_data)
+    return {"product_id": str(result.inserted_id)}
+
+@app.put("/products/{product_id}/quantity")
+def update_product_quantity(product_id: str, quantity_update: QuantityUpdate, current_user: dict = Depends(get_current_user)):
+    try:
+        object_id = ObjectId(product_id)
+    except:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid product ID")
+    result = products_collection.update_one(
+        {"_id": object_id},
+        {"$set": {"quantity": quantity_update.quantity}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+    updated_product = products_collection.find_one({"_id": object_id})
+    return {
+        "id": str(updated_product["_id"]),
+        "quantity": updated_product["quantity"]
+    }
+
+@app.get("/products")
+def get_products(skip: int = 0, limit: int = 10, current_user: dict = Depends(get_current_user)):
+    products = list(products_collection.find().skip(skip).limit(limit))
+    result = []
+    for product in products:
+        product["id"] = str(product["_id"])
+        del product["_id"]
+        result.append(product)
+    return result

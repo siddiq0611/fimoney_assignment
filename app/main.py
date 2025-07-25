@@ -42,3 +42,29 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception
     return user
+
+@app.post("/register", status_code=status.HTTP_201_CREATED)
+def register_user(user_in: UserIn):
+    hashed_password = bcrypt.hashpw(user_in.password.encode('utf-8'), bcrypt.gensalt())
+    user_data = {
+        "username": user_in.username,
+        "password": hashed_password.decode('utf-8')
+    }
+    users_collection.insert_one(user_data)
+    return {"message": "User registered successfully"}
+
+@app.post("/login", response_model=Token)
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = users_collection.find_one({"username": form_data.username})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Invalid credentials"
+            )
+    if not bcrypt.checkpw(form_data.password.encode('utf-8'), user["password"].encode('utf-8')):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Invalid credentials"
+            )
+    access_token = create_access_token(data={"sub": user["username"]})
+    return {"access_token": access_token, "token_type": "bearer"}

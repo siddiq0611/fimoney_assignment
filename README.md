@@ -1,1 +1,122 @@
-# fimoney_assignment
+# Inventory Management Tool API
+
+A FastAPI backend for inventory management with MongoDB Atlas integration.
+
+## Features
+
+- User registration and login (JWT authentication)
+- Add, update, and fetch products
+- Secure endpoints (JWT required)
+- MongoDB Atlas for data persistence
+
+---
+
+## Project Structure
+
+```
+f1money_assignment/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── models.py
+│   └── database.py
+├── requirements.txt
+├── README.md
+├── init_db.py
+└── .env
+```
+
+---
+
+## Setup Instructions
+
+### 1. **Clone the Repository**
+
+```bash
+git clone <your-repo-url>
+cd f1money_assignment
+```
+
+### 2. **Install Dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. **Set Up Environment Variables**
+
+Create a `.env` file in the root directory with your MongoDB Atlas URI and JWT secret:
+
+```
+MONGODB_URI=your_mongodb_atlas_uri
+JWT_SECRET_KEY=your_jwt_secret
+```
+
+### 4. **Run the Server**
+
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
+```
+- The API will be available at: [http://localhost:8080](http://localhost:8080)
+
+---
+
+## API Documentation
+
+Interactive docs are available at:  
+**Swagger UI:** [http://localhost:8080/docs](http://localhost:8080/docs)
+
+---
+
+## Testing the API
+
+### **With Swagger UI**
+
+1. Open [http://localhost:8080/docs](http://localhost:8080/docs) in your browser.
+2. Use the "Try it out" button on endpoints:
+   - **POST /register** — Register a new user.
+   - **POST /login** — Log in and get a JWT token.
+   - **GET /products** — Get all products (requires JWT).
+   - **POST /products** — Add a new product (requires JWT).
+   - **PUT /products/{id}/quantity** — Update product quantity (requires JWT).
+
+### **With Postman**
+
+#### **1. Register**
+
+- **POST** `http://localhost:8080/register`
+- **Body:** raw, JSON
+  ```json
+  {
+    "username": "puja",
+    "password": "mypassword"
+  }
+  ```
+
+#### **2. Login**
+
+- **POST** `http://localhost:8080/login`
+- **Body:** raw, JSON
+  ```json
+  {
+    "username": "abc123",
+    "password": "mypassword"
+  }
+  ```
+- **Copy the `access_token` from the response.**
+
+#### **3. Authenticated Requests**
+
+- Add header:  
+  `Authorization: Bearer <access_token>`
+- Example: **GET** `http://localhost:8080/products`
+
+---
+
+## Notes
+
+- Ensure your MongoDB Atlas cluster is accessible from your machine.
+- JWT tokens are required for protected endpoints (`/products`, etc.).
+- If you encounter errors, check the server terminal for logs.
+
+---

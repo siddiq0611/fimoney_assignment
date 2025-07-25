@@ -51,11 +51,11 @@ def register_user(user_in: UserIn):
     return {"message": "User registered successfully"}
 
 @app.post("/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = users_collection.find_one({"username": form_data.username})
+def login(user_in: UserIn):
+    user = users_collection.find_one({"username": user_in.username})
     if not user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
-    if not bcrypt.checkpw(form_data.password.encode('utf-8'), user["password"].encode('utf-8')):
+    if not bcrypt.checkpw(user_in.password.encode('utf-8'), user["password"].encode('utf-8')):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid credentials")
     access_token = create_access_token(data={"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}

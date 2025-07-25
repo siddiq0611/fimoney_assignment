@@ -40,6 +40,8 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 def register_user(user_in: UserIn):
+    if users_collection.find_one({"username": user_in.username}):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
     hashed_password = bcrypt.hashpw(user_in.password.encode('utf-8'), bcrypt.gensalt())
     user_data = {
         "username": user_in.username,

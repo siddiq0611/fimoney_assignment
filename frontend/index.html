@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Inventory Management System</h1>
+        </div>
+        
+        <div class="content">
+            <div class="auth-section">
+                <h2 class="section-title"> Authentication</h2>
+                <div id="loginForm">
+                    <div class="form-group">
+                        <input type="text" id="username" placeholder="Username" value="testuser">
+                        <input type="password" id="password" placeholder="Password" value="testpass">
+                    </div>
+                    <button onclick="register()">Register</button>
+                    <button onclick="login()">Login</button>
+                </div>
+                <div id="authStatus"></div>
+            </div>
+
+            <div class="product-section hidden" id="productSection">
+                <h2 class="section-title"> Product Management</h2>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProducts">0</div>
+                        <div class="stat-label">Total Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalValue">$0</div>
+                        <div class="stat-label">Total Value</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="lowStock">0</div>
+                        <div class="stat-label">Low Stock Items</div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="addProductForm">
+                    <input type="text" id="productName" placeholder="Product Name">
+                    <input type="text" id="productType" placeholder="Product Type">
+                    <input type="text" id="productSku" placeholder="SKU">
+                    <input type="url" id="productImage" placeholder="Image URL">
+                    <textarea id="productDesc" placeholder="Description" rows="2"></textarea>
+                    <input type="number" id="productQty" placeholder="Quantity" min="0">
+                    <input type="number" id="productPrice" placeholder="Price" step="0.01" min="0">
+                </div>
+                <button onclick="addProduct()">Add Product</button>
+                <button onclick="loadProducts()">Refresh Products</button>
+                
+                <div id="productStatus"></div>
+                
+                <div class="products-grid" id="productsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

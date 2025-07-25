@@ -1,258 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management</title>
-    <style>
-        * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  background: #f0f0f0;
-  padding: 20px;
-  min-height: 100vh;
-}
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.header {
-  background: #333;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-}
-
-.header h1 {
-  font-size: 2rem;
-}
-
-.content {
-  padding: 20px;
-}
-
-.auth-section, .product-section {
-  background: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 6px;
-}
-
-.section-title {
-  font-size: 1.25rem;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.form-group {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-input, select, textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #333;
-}
-
-button {
-  background: #333;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-}
-
-.product-card {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 15px;
-}
-
-.product-name {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.product-details {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-.quantity-update {
-  display: flex;
-  gap: 10px;
-}
-
-.quantity-update input {
-  width: 60px;
-}
-
-.status {
-  padding: 8px;
-  border-radius: 4px;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.success {
-  background: #d4edda;
-  color: #155724;
-}
-
-.error {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.hidden {
-  display: none;
-}
-
-.loading {
-  width: 18px;
-  height: 18px;
-  border: 2px solid #ccc;
-  border-top: 2px solid #333;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background: #333;
-  color: #fff;
-  padding: 15px;
-  text-align: center;
-  border-radius: 6px;
-}
-
-.stat-number {
-  font-size: 1.5rem;
-}
-
-.stat-label {
-  font-size: 0.85rem;
-}
-
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Inventory Management System</h1>
-        </div>
-        
-        <div class="content">
-            <!-- Authentication Section -->
-            <div class="auth-section">
-                <h2 class="section-title"> Authentication</h2>
-                <div id="loginForm">
-                    <div class="form-group">
-                        <input type="text" id="username" placeholder="Username" value="testuser">
-                        <input type="password" id="password" placeholder="Password" value="testpass">
-                    </div>
-                    <button onclick="register()">Register</button>
-                    <button onclick="login()">Login</button>
-                </div>
-                <div id="authStatus"></div>
-            </div>
-
-            <!-- Product Management Section -->
-            <div class="product-section hidden" id="productSection">
-                <h2 class="section-title"> Product Management</h2>
-                
-                <!-- Stats -->
-                <div class="stats">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalProducts">0</div>
-                        <div class="stat-label">Total Products</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalValue">$0</div>
-                        <div class="stat-label">Total Value</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="lowStock">0</div>
-                        <div class="stat-label">Low Stock Items</div>
-                    </div>
-                </div>
-
-                <!-- Add Product Form -->
-                <div class="form-group" id="addProductForm">
-                    <input type="text" id="productName" placeholder="Product Name">
-                    <input type="text" id="productType" placeholder="Product Type">
-                    <input type="text" id="productSku" placeholder="SKU">
-                    <input type="url" id="productImage" placeholder="Image URL">
-                    <textarea id="productDesc" placeholder="Description" rows="2"></textarea>
-                    <input type="number" id="productQty" placeholder="Quantity" min="0">
-                    <input type="number" id="productPrice" placeholder="Price" step="0.01" min="0">
-                </div>
-                <button onclick="addProduct()">Add Product</button>
-                <button onclick="loadProducts()">Refresh Products</button>
-                
-                <div id="productStatus"></div>
-                
-                <!-- Products List -->
-                <div class="products-grid" id="productsContainer"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const API_BASE = 'http://localhost:8080';
+const API_BASE = 'http://localhost:8080';
         let authToken = '';
 
-        // Show status messages
         function showStatus(message, type = 'success', containerId = 'authStatus') {
             const container = document.getElementById(containerId);
             container.innerHTML = `<div class="status ${type}">${message}</div>`;
             setTimeout(() => container.innerHTML = '', 5000);
         }
 
-        // Register user
         async function register() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -281,7 +35,6 @@ button:disabled {
             }
         }
 
-        // Login user
         async function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -315,7 +68,6 @@ button:disabled {
             }
         }
 
-        // Add product
         async function addProduct() {
             if (!authToken) {
                 showStatus('Please login first', 'error', 'productStatus');
@@ -349,7 +101,6 @@ button:disabled {
 
                 if (response.ok) {
                     showStatus('Product added successfully!', 'success', 'productStatus');
-                    // Clear form
                     document.getElementById('addProductForm').querySelectorAll('input, textarea').forEach(input => input.value = '');
                     loadProducts();
                 } else {
@@ -360,7 +111,6 @@ button:disabled {
             }
         }
 
-        // Load products
         async function loadProducts() {
             if (!authToken) return;
 
@@ -381,7 +131,6 @@ button:disabled {
             }
         }
 
-        // Display products
         function displayProducts(products) {
             const container = document.getElementById('productsContainer');
             
@@ -408,7 +157,6 @@ button:disabled {
             `).join('');
         }
 
-        // Update product quantity
         async function updateQuantity(productId) {
             const newQuantity = parseInt(document.getElementById(`qty-${productId}`).value);
             
@@ -438,7 +186,6 @@ button:disabled {
             }
         }
 
-        // Update statistics
         function updateStats(products) {
             document.getElementById('totalProducts').textContent = products.length;
             
@@ -449,11 +196,7 @@ button:disabled {
             document.getElementById('lowStock').textContent = lowStock;
         }
 
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Inventory Management Frontend Loaded');
             console.log('Make sure your FastAPI server is running on http://localhost:8080');
         });
-    </script>
-</body>
-</html>

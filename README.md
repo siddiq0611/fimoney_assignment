@@ -15,6 +15,10 @@ A FastAPI backend for inventory management with MongoDB Atlas integration.
 
 ```
 f1money_assignment/
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
 ├── app/
 │   ├── __init__.py
 │   ├── main.py
@@ -58,6 +62,12 @@ JWT_SECRET_KEY=your_jwt_secret
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
 ```
 - The API will be available at: [http://localhost:8080](http://localhost:8080)
+
+### 5. **Frontend**
+
+Go to the `frontend/` folder and open `index.html` in your browser to access the interface.
+
+Make sure the FastAPI server is running at `http://localhost:8080`.
 
 ---
 

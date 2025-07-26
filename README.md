@@ -1,6 +1,6 @@
 # Inventory Management Tool API
 
-A FastAPI backend for inventory management with MongoDB Atlas integration.
+A full-stack Inventory Management application with a FastAPI backend and a lightweight HTML/CSS/JS frontend. It allows user registration/login, and product management (add, view, and update) using a MongoDB Atlas database.
 
 ## Features
 
@@ -11,23 +11,40 @@ A FastAPI backend for inventory management with MongoDB Atlas integration.
 
 ---
 
+## Tech Stack
+
+### Backend
+- **FastAPI** – For building high-performance APIs
+- **MongoDB Atlas** – Cloud-hosted NoSQL database
+- **PyMongo** – MongoDB driver for Python
+- **JWT Authentication** – Secured endpoints using access tokens
+- **Python-Decouple** – Environment variable management
+- **Pydantic** – Data validation
+
+### Frontend
+- **HTML5** – Basic UI structure
+- **CSS3** – Styling
+- **Vanilla JavaScript** – API interaction and dynamic behavior
+
+---
+
 ## Project Structure
 
 ```
 f1money_assignment/
 ├── frontend/
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
+│   ├── index.html         # Main frontend UI
+│   ├── style.css          # Styles for frontend
+│   └── script.js          # Client-side API interaction logic
 ├── app/
 │   ├── __init__.py
-│   ├── main.py
-│   ├── models.py
-│   └── database.py
-├── requirements.txt
-├── README.md
-├── init_db.py
-└── .env
+│   ├── main.py            # FastAPI entry point
+│   ├── models.py          # Pydantic models for data validation
+│   └── database.py        # MongoDB connection and collections
+├── requirements.txt       # Python dependencies
+├── README.md              # Project documentation
+├── init_db.py             # Utility to initialize MongoDB collections and indexes
+└── .env                   # Environment variables (excluded from Git)
 ```
 
 ---
@@ -68,6 +85,47 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
 Go to the `frontend/` folder and open `index.html` in your browser to access the interface.
 
 Make sure the FastAPI server is running at `http://localhost:8080`.
+
+---
+
+## Authentication Flow
+
+### Register a User
+
+```http
+POST /register
+Content-Type: application/json
+
+{
+  "username": "puja",
+  "password": "mypassword"
+}
+```
+### Login and Receive JWT Token
+
+```http
+POST /login
+Form Data:
+username=puja
+password=mypassword
+```
+
+### Add Authorization Header to Protected Endpoints
+
+```makefile
+Authorization: Bearer <your_jwt_token>
+```
+
+---
+
+## Product Management Endpoints
+
+| Method | Endpoint                   | Description                   | Auth Required  |
+|--------|----------------------------|-------------------------------|----------------|
+| GET    | `/products`                | Fetch all products            | ✅             |
+| POST   | `/products`                | Add a new product             | ✅             |
+| PUT    | `/products/{id}/quantity`  | Update quantity of a product  | ✅             |
+
 
 ---
 
